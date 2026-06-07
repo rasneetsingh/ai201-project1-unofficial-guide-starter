@@ -54,13 +54,52 @@ visa status.
      - Any preprocessing you did before chunking (e.g., stripping HTML, removing headers)
      - What your final chunk count was across all documents -->
 
-**Chunk size:**
+**Chunk size:** 500 characters (target max, ≈125 tokens).
 
-**Overlap:**
+**Overlap:** ~75 characters (~15%), carried as a whole trailing **sentence** so no chunk begins
+mid-sentence.
 
-**Why these choices fit your documents:**
+**Preprocessing before chunking** (`clean_text()` in `pipeline.py`): decode HTML entities and
+strip any stray tags (defensive — sources are hand-copied plain text), normalize smart
+quotes/dashes to ASCII so domain jargon (`1040NR`, `5-6 years`) is consistent, strip trailing
+whitespace, and collapse the blank " " spacer lines the sources use into single blank lines.
 
-**Final chunk count:**
+**Why these choices fit your documents:** The corpus is **structurally heterogeneous**, so a fixed
+character split is the wrong tool — it would over-split the one-sentence `banking` doc and sever
+points from their headings in the long `visapp` guide. Instead, `chunk_text()` is **paragraph- and
+bullet-aware**: it (1) keeps any document that fits in 500 chars as a single chunk (so `banking`
+stays whole), (2) otherwise splits on natural boundaries — blank lines and bullet markers — and
+greedily packs those segments up to 500 chars without breaking one, and (3) only falls back to
+sentence splitting for a paragraph that is itself longer than 500 chars (with abbreviations like
+`vs.`, `e.g.`, `U.S.` protected so sentences aren't mis-split). The ~75-char sentence overlap keeps
+adjacent sub-points connected for multi-part answers.
+
+**Final chunk count:** **79 chunks** across 10 documents (min 153 / max 499 / avg 387 chars;
+0 empty, 0 HTML artifacts). Per-document counts scale with length: `banking` 1, `visapp` 19.
+
+### Sample chunks (5 labeled, with source document)
+
+**1. `f1_student_banking.txt` — chunk_0 (310 chars):**
+> You don't need ITIN/SSN to open a bank account. Schedule an appointment at any bank and go. Take your passport, US address proof (lease agreement/electricity/wifi bill), US phone number, SSN equivalent of your home country (just the number is good enough. You don't need the actual card). That's pretty much it
+
+**2. `f1_student_tax.txt` — chunk_1 (440 chars):**
+> COMMENTS / ADVICE:
+> Tax status basics: International students on F-1 visas are considered nonresident aliens for tax purposes for their first 5 years in the country. If you entered the US last year, you'll generally need to file Form 8843 and Form 1040NR - which TurboTax does not support. That's why F-1 students can't use TurboTax.
+> Filing options people recommended:
+> - Sprintax: similar to TurboTax but for nonresidents; expensive (~$105).
+
+**3. `f1_student_opt.txt` — chunk_1 (446 chars):**
+> If you are an F-1 student, you may be eligible to participate in OPT in two different ways:
+> Pre-completion OPT: You may apply to participate in pre-completion OPT after you have been lawfully enrolled on a full-time basis for one full academic year at a college, university, conservatory, or seminary that has been certified by the U.S. Immigration and Customs Enforcement (ICE) Student and Exchange Visitor Program (SEVP) to enroll F-1 students.
+
+**4. `f1_student_investing.txt` — chunk_1 (206 chars):**
+> I'm on F1 and hold some stocks with Schwab.
+> As long as you have an SSN, you can invest in stocks or open a high-yield savings account (HYSA).
+> You can invest in stocks, cryptocurrency, ETFs, and real estate.
+
+**5. `f1_student_visapp.txt` — chunk_1 (292 chars):**
+> STEP 1 - HAVE A NARRATIVE:
+> There is no single "good" answer for questions like "what will you do after graduation?" or "why this program?" What matters is that your narrative is (1) consistent with the law, (2) consistent with the rest of your narrative, and (3) consistent with common sense.
 
 ---
 

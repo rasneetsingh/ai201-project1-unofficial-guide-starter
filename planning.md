@@ -51,9 +51,14 @@ status. This system makes that scattered knowledge searchable in one place.
      numbers fit the structure of your documents.
      A review-heavy corpus warrants different chunking than a long FAQ. -->
 
-**Chunk size:** ~400–600 characters (~100–150 tokens) — *tentative, to confirm in Milestone 2.*
+**Chunk size:** **500 characters** target max (~125 tokens) — *finalized in Milestone 3.*
 
-**Overlap:** ~10–15% (~50–80 characters).
+**Overlap:** **~75 characters (~15%)**, carried as a whole trailing **sentence** (not a raw
+character slice) so chunks never begin mid-sentence.
+
+**Final result (Milestone 3):** 79 chunks across 10 documents (min 153 / max 499 / avg 387 chars);
+`banking` stays 1 chunk, `visapp` splits into 19. Implemented in `pipeline.py` as a
+**paragraph- and bullet-aware packer** rather than a fixed character split.
 
 **Reasoning:** My documents are **structurally heterogeneous**, which is the central chunking
 challenge:
