@@ -10,9 +10,17 @@
 ## Domain
 
 <!-- What topic or category of knowledge does your system cover?
-     Why is this knowledge valuable, and why is it hard to find through official channels?
-     Example: "Student reviews of CS professors at [university] — useful because official
-     course descriptions don't reflect teaching style, exam difficulty, or workload." -->
+     Why is this knowledge valuable, and why is it hard to find through official channels? -->
+
+This Unofficial Guide covers the practical, day-to-day realities of living in the US as an
+international student on an **F-1 visa** — work authorization (CPT/OPT), the H-1B and visa-interview
+process, taxes, banking, health insurance, investing, and the job search. Official sources like
+USCIS and university international offices explain the *legal rules* but rarely the *lived
+experience*: which documents a bank will actually accept without an SSN, whether the cheap
+"student" insurance plans actually pay out, which tax software works for nonresidents, or what a
+visa officer is really probing for. This knowledge is scattered across Reddit threads, YouTube
+transcripts, and word-of-mouth — and getting it wrong carries high-stakes consequences for your
+visa status.
 
 ---
 
@@ -22,18 +30,18 @@
      Be specific: include URLs, subreddit names, forum thread titles, or file names.
      Aim for variety — sources that together cover different subtopics or perspectives. -->
 
-| # | Source | Type | URL or file path |
-|---|--------|------|-----------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
-| 6 | | | |
-| 7 | | | |
-| 8 | | | |
-| 9 | | | |
-| 10 | | | |
+| # | Subtopic | Type | File | Original source URL |
+|---|----------|------|------|---------------------|
+| 1 | Day 1 CPT application steps | Reddit guide (r/Day1CPTuniversities) | `documents/f1_student_day1cpt.txt` | https://www.reddit.com/r/Day1CPTuniversities/comments/1ny23ip/guide_day_1_cpt_application_step_by_step/ |
+| 2 | OPT (pre/post-completion) | Official — USCIS | `documents/f1_student_opt.txt` | https://www.uscis.gov/working-in-the-united-states/students-and-exchange-visitors/optional-practical-training-opt-for-f-1-students |
+| 3 | H-1B sponsorship process | University office (Ohio State OIA) | `documents/f1_student_h1b.txt` | https://oia.osu.edu/international-scholars/h-1b-workers/h-1b-step-step-process |
+| 4 | Investing as an F-1 student | Reddit Q&A (r/f1visa) | `documents/f1_student_investing.txt` | https://www.reddit.com/r/f1visa/comments/1gyc6sk/can_f1_students_in_the_us_make_investments/ |
+| 5 | Job search & OPT unemployment | Reddit Q&A (r/PhD) | `documents/f1_students_jobsearch.txt` | https://www.reddit.com/r/PhD/comments/1jcr56m/struggling_with_job_hunting_as_an_f1_student_need/ |
+| 6 | Health insurance | Reddit Q&A (r/f1visa) | `documents/f1_student_health.txt` | https://www.reddit.com/r/f1visa/comments/1pkmcfs/these_are_the_worst_insurance_a_student_can_get/ |
+| 7 | Part-time / summer work hours | Reddit Q&A (r/f1visa) | `documents/f1_student_employment.txt` | https://www.reddit.com/r/f1visa/comments/1fbakb7/are_students_on_an_f1_visa_allowed_to_work_during/ |
+| 8 | Visa interview prep | Reddit guide (r/IntltoUSA) | `documents/f1_student_visapp.txt` | https://www.reddit.com/r/IntltoUSA/comments/1sth1tg/three_steps_to_prepare_for_your_f1_us_student/ |
+| 9 | Taxes (nonresident filing) | Reddit Q&A (r/tax) | `documents/f1_student_tax.txt` | https://www.reddit.com/r/tax/comments/1rofo6m/taxes_for_international_students/ |
+| 10 | Opening a bank account | Personal tip / forum note | `documents/f1_student_banking.txt` | _(no URL — add the source you collected this from)_ |
 
 ---
 

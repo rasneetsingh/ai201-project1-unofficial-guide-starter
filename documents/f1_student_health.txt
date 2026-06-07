@@ -1,0 +1,24 @@
+QUESTION (OP):
+Students who come to the USA on an F-1 visa usually pay around $2,000–$3,000 per year for health insurance. Recently some influencers have started recommending two cheaper insurance options instead of university-provided insurance (ISOA OPT plans and InternationalStudentInsurance.com), claiming students can spend half or even a quarter of the cost. I'm new to insurance and the factor I care about most is the out-of-pocket maximum — and neither of these plans mentions one. I don't know what's stopping people from just getting a plan from the insurance marketplace instead.
+ 
+COMMENTS / ADVICE:
+ 
+These travel/student insurance plans are more scam than insurance — they deny almost everything. Always get insurance from your university, or if buying on your own, make sure it's ACA (Affordable Care Act) compliant. Anything that isn't ACA-compliant is basically useless. And always ignore influencers, especially for healthcare or money matters.
+ 
+How to get ACA-compliant insurance on your own: Go to healthcare.gov, create an account, fill out an application, choose a plan, and pay. Or call 1-800-318-2596 (available 24/7 except holidays). Open enrollment has deadlines (e.g., Dec 15). Caveat: with ACA marketplace plans you must report income changes. Example — a graduated student with no job gets marketplace insurance and pays roughly $15–90/month depending on the plan. If they later get a good job and don't report the income, the subsidy disappears (e.g., $30/month jumps to ~$400/month) and the IRS will recover the difference at tax filing. For a contract job, ~$400/month is roughly the standard unsubsidized price anyway; for a full-time job with benefits, you might skip the marketplace plan to save money.
+ 
+On subsidies/eligibility: If marketplace prices show as high (~$300), either your income is too high or you aren't eligible for subsidies — call them for help. (One commenter noted confusion about whether recent policy changes affected subsidy eligibility.)
+ 
+On out-of-pocket maximums: If a plan has a maximum *limit on coverage*, then your out-of-pocket expenses are effectively unlimited — which is the dangerous part.
+ 
+Why university plans are usually better: Most universities require their own insurance and the international office tells you which one to get. They've often negotiated prices, so it's cheaper, and you get to use the campus clinic for nearly free. One person paid ~$900/term for a PPO through their university and considered it the best deal/coverage.
+ 
+Real experiences with the cheap plans:
+- ISO: "had it for a month, basically didn't cover anything." The clinic said they'd never seen insurance like it. (Note: ISO is partnered with Aetna, a large insurer — but commenters said it was still useless in practice.)
+- ISOA: bare-minimum coverage. Fine if you're a healthy, unmarried young adult trying to save money — but not if you're in your late 20s+, have a family, or have a condition needing regular treatment.
+- One commenter said the cheap (non-ACA) option can be OK for a generally healthy person, but you must wait ~1 year with no health issues before non-emergency coverage kicks in. They developed gastritis during the waiting period and had to switch to the (pricier) school plan, which covered everything.
+ 
+Strong warnings against cheaping out:
+- A common insurer tactic is ramping up the denial rate — they deny a claim so you either pay the full bill yourself or settle for a cheaper treatment they'll cover, sometimes risking permanent harm.
+- Insurance is NOT the thing to cheap out on as an international student. One commenter estimated $10,000–20,000 in medical costs over 4 years as a generally healthy person — but with good insurance paid pennies on the dollar (a copay, a few dollars for meds, ~$20–30 for an X-ray). Bad/no insurance can leave you with an $800 bill for a flu consultation plus expensive meds. Saving ~$1,000 now to risk a 100x bigger bill later isn't worth it.
+ 

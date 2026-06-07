@@ -1,0 +1,30 @@
+QUESTION (OP):
+I am a graduate student on an F1 visa with long-term plans of getting a green card after my studies. I've recently become interested in investments and want to know if it is legal for F1 students to invest.
+ 
+COMMENTS / ADVICE:
+ 
+Yes, F1 students can invest in stocks. People also receive stock options when they start working after graduation. The main thing to avoid is day trading.
+ 
+Yes you can. I'm on F1 and hold some stocks with Schwab.
+ 
+As long as you have an SSN, you can invest in stocks or open a high-yield savings account (HYSA).
+ 
+You can invest in stocks, cryptocurrency, ETFs, and real estate.
+ 
+On brokerages: Acorns has really high fees, so make sure that's what you want before using it. Schwab is recommended — negligible fees and the most foreigner-friendly by far. Schwab even lets you keep your accounts after you move back abroad. Others recommend Robinhood Gold or Fidelity instead of Acorns.
+ 
+Most brokerages require an SSN, but some options like Interactive Brokers do not require it. If you want a US-based brokerage, one path is to get an on-campus job, request an SSN, and then open an account at most brokerages once you have it. Note: F1 students may be taxed a flat 30% on investment gains, regardless of long-term vs. short-term capital gains or tax bracket.
+ 
+Tax/classification detail: F1 students are non-US persons for tax purposes. When opening a brokerage account, many banks require you to sign an affidavit that you are a US person. Schwab uses a W-9 form rather than a W-8BEN. From an immigration standpoint there is no issue — this is purely a tax and classification matter. A benefit of filing as a non-resident (Form 1040NR) is that you have no tax liability on worldwide income; once you start filing as a resident (Form 1040), that changes. You generally become a tax resident after 5 years. (This is not legal advice — consult a professional.)
+ 
+On day trading — conflicting views:
+- Several commenters say flatly: "No day trading."
+- One notes there is no firm precedent; the general guidance is that investing shouldn't interfere with your studies/work, and trading too frequently is risky.
+- A counterpoint: day trading isn't strictly banned. It just shouldn't be your primary occupation. One commenter reports doing 5–6 trades a day on H1B, filing taxes every year with a list of trades, with no problem. The rule of thumb: occasional trading is fine, but sitting in front of your brokerage all day is a problem.
+- Another says you can day trade as long as you meet the brokerage's pattern-day-trader requirement of $25K in assets (reported as checked with an immigration firm ~10 years ago).
+- Day trading here means buying and selling the same security within the same day.
+ 
+On real estate: You can buy real estate on essentially any visa, including F1. You can rent it out as long as you don't actively manage the property. Another option is buying REIT stocks and earning through dividends.
+ 
+General tax reminder: If you invest, include your earnings on your tax report — your brokerage app will provide the relevant tax form.
+ 

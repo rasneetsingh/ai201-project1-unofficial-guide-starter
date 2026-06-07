@@ -1,0 +1,23 @@
+QUESTION (OP):
+I'm an international student on an F-1 visa and just received my W-2 from my campus job. I heard international students can't use TurboTax — is that true? If so, what do other international students use to file taxes in the US?
+ 
+COMMENTS / ADVICE:
+ 
+Tax status basics: International students on F-1 visas are considered nonresident aliens for tax purposes for their first 5 years in the country. If you entered the US last year, you'll generally need to file Form 8843 and Form 1040NR — which TurboTax does not support. That's why F-1 students can't use TurboTax.
+ 
+Filing options people recommended:
+- Sprintax: similar to TurboTax but for nonresidents; expensive (~$105).
+- Glacier Tax Prep: offered free by some universities, but doesn't support state taxes.
+- F1TaxReturn: like FreeTaxUSA but built specifically for F-1 nonresident aliens; cheaper than Sprintax (free federal, ~$30 for state).
+- OLT (olt.com): free and covers 1040-NR. One commenter strongly recommended it after trying TurboTax and Sprintax. (Mixed experiences though — one person kept getting "rejected" errors with it, while others said it worked smoothly.)
+- Fill out the forms yourself by downloading them: cheapest option, but easier to make mistakes.
+- VITA sites: Strongly recommended — check whether your college (or one nearby) has a VITA site with a volunteer who has the foreign-student certification. If not, you can use the online facilitated self-assistance / online VITA option through myfreetaxes.com (a free program run by United Way).
+ 
+Caution on tool accuracy: Different tools can disagree. One person's OLT result said no tax due while Sprintax said tax was owed; another said Sprintax calculated their case incorrectly and OLT fixed it. Takeaway from commenters: have a rough idea of what you should owe and don't rely 100% on the software.
+ 
+Filing a missed prior year: If you had no income in a year (e.g., 2024) you may still need to handle it, but tools like Sprintax often only file the current year — you may need to file a prior year separately.
+ 
+Side income (e.g., referral/affiliate payouts): If you didn't receive a 1099 for it, you generally don't need to report it; if you did receive a 1099, you have to file it.
+ 
+Tuition refund question: No — F-1 nonresident students don't get a tax refund or reimbursement on tuition simply for being nonresidents.
+ 
