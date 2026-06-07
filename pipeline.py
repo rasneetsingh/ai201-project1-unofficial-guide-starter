@@ -39,7 +39,7 @@ SOURCE_URLS = {
     "f1_student_employment.txt": "https://www.reddit.com/r/f1visa/comments/1fbakb7/are_students_on_an_f1_visa_allowed_to_work_during/",
     "f1_student_visapp.txt": "https://www.reddit.com/r/IntltoUSA/comments/1sth1tg/three_steps_to_prepare_for_your_f1_us_student/",
     "f1_student_tax.txt": "https://www.reddit.com/r/tax/comments/1rofo6m/taxes_for_international_students/",
-    "f1_student_banking.txt": "",  # no public URL collected for this source
+    "f1_student_banking.txt": "https://www.reddit.com/r/f1visa/comments/1pmim77/f1_student_need_advice_on_starting_a_bank_account/",
 }
 
 

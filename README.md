@@ -41,7 +41,7 @@ visa status.
 | 7 | Part-time / summer work hours | Reddit Q&A (r/f1visa) | `documents/f1_student_employment.txt` | https://www.reddit.com/r/f1visa/comments/1fbakb7/are_students_on_an_f1_visa_allowed_to_work_during/ |
 | 8 | Visa interview prep | Reddit guide (r/IntltoUSA) | `documents/f1_student_visapp.txt` | https://www.reddit.com/r/IntltoUSA/comments/1sth1tg/three_steps_to_prepare_for_your_f1_us_student/ |
 | 9 | Taxes (nonresident filing) | Reddit Q&A (r/tax) | `documents/f1_student_tax.txt` | https://www.reddit.com/r/tax/comments/1rofo6m/taxes_for_international_students/ |
-| 10 | Opening a bank account | Personal tip / forum note | `documents/f1_student_banking.txt` | _(no URL — add the source you collected this from)_ |
+| 10 | Opening a bank account | Reddit Q&A (r/f1visa) | `documents/f1_student_banking.txt` | https://www.reddit.com/r/f1visa/comments/1pmim77/f1_student_need_advice_on_starting_a_bank_account/ |
 
 ---
 
@@ -202,19 +202,18 @@ the chunks actually passed to the model*, not from anything the LLM writes; the 
 in a dedicated "Retrieved from" box. (b) **Inline** — the model cites `(source: <url>)` next to
 claims; a small post-processing step (`_dedupe_citations`) collapses any repeated URL within a
 citation so links aren't listed multiple times. If the model returns the refusal, the `sources` list
-is cleared so we never attribute a non-answer. *(One document, `f1_student_banking.txt`, was a
-personal forum tip with no public URL collected, so it falls back to the filename until a link is
-added.)*
+is cleared so we never attribute a non-answer. *(If a document ever lacks a source URL, the citation
+falls back to its filename.)*
 
 ### Example Responses
 
 **Example 1 — grounded, source attributed** (input: *"Do I need an SSN or ITIN to open a US bank
 account as an F-1 student?"*):
-> No, you don't need an SSN or ITIN to open a US bank account as an F-1 student. You can open a bank
+> You don't need an SSN or ITIN to open a bank account as an F-1 student. You can open a bank
 > account with your passport, US address proof, US phone number, and the SSN equivalent of your home
-> country **(source: f1_student_banking.txt)**. *(banking is the one source with no public URL.)*
+> country **(source: https://www.reddit.com/r/f1visa/comments/1pmim77/f1_student_need_advice_on_starting_a_bank_account/)**.
 
-*Retrieved from:* f1_student_banking.txt, https://www.reddit.com/r/f1visa/comments/1gyc6sk/can_f1_students_in_the_us_make_investments/
+*Retrieved from:* https://www.reddit.com/r/f1visa/comments/1pmim77/f1_student_need_advice_on_starting_a_bank_account/, https://www.reddit.com/r/f1visa/comments/1gyc6sk/can_f1_students_in_the_us_make_investments/
 
 **Example 2 — grounded, source attributed** (input: *"Why can't F-1 students use TurboTax, and what
 should they use instead?"*):

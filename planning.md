@@ -40,7 +40,7 @@ status. This system makes that scattered knowledge searchable in one place.
 | 7 | Reddit — r/f1visa | Part-time / summer work hour limits (20 vs 40) and CPT vs OPT | https://www.reddit.com/r/f1visa/comments/1fbakb7/are_students_on_an_f1_visa_allowed_to_work_during/ |
 | 8 | Reddit — r/IntltoUSA | Three-step framework to prepare for the F-1 visa interview | https://www.reddit.com/r/IntltoUSA/comments/1sth1tg/three_steps_to_prepare_for_your_f1_us_student/ |
 | 9 | Reddit — r/tax | Nonresident tax filing (8843/1040NR), Sprintax/Glacier/OLT/VITA | https://www.reddit.com/r/tax/comments/1rofo6m/taxes_for_international_students/ |
-| 10 | Personal tip / forum | Opening a US bank account without an SSN/ITIN | `documents/f1_student_banking.txt` _(add original URL)_ |
+| 10 | Reddit — r/f1visa | Opening a US bank account without an SSN/ITIN | https://www.reddit.com/r/f1visa/comments/1pmim77/f1_student_need_advice_on_starting_a_bank_account/ |
 
 ---
 
