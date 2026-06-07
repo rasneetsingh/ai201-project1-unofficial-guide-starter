@@ -164,9 +164,84 @@ with a top-result distance well under 0.5:
      Do not just say "I told it to use the documents" — show the actual instruction or explain
      the mechanism. -->
 
-**System prompt grounding instruction:**
+Grounding is enforced **two ways** (see `query.py`), so the system can't fall back on the LLM's
+training knowledge:
 
-**How source attribution is surfaced in the response:**
+**1. Structural gate (before the LLM is ever called).** Retrieval returns chunks with a cosine
+distance. If the *closest* chunk is farther than `IN_SCOPE_THRESHOLD = 0.55`, the question is
+treated as out-of-scope and the system returns the fixed refusal **without calling the LLM at all**
+— so for off-topic questions there is no opportunity to hallucinate. Chunks farther than
+`CONTEXT_THRESHOLD = 0.62` are also dropped from the context so loosely-related text can't dilute
+the answer. The model is also called with `temperature=0` for deterministic, grounded output.
+
+**System prompt grounding instruction** (the actual instruction, not a paraphrase):
+
+> You are a careful assistant that answers questions for international students on F-1 visas, using
+> ONLY the context documents provided by the user.
+> Rules:
+> - Answer using only facts stated in the context documents below. Do NOT use any outside or prior
+>   knowledge.
+> - If the context does not contain enough information to answer the question, reply with EXACTLY
+>   this sentence and nothing else: "I don't have enough information on that."
+> - Do not guess, do not infer beyond what the text says, and do not add general advice that is not
+>   in the context.
+> - These are community/forum sources, so when relevant, attribute claims to the source filename,
+>   e.g. (source: f1_student_tax.txt).
+
+The retrieved chunks are passed in the user message as a numbered, source-labeled context block
+(`[1] (source: f1_student_banking.txt) <chunk text>`), so the model sees exactly which document
+each fact came from.
+
+**How source attribution is surfaced in the response:** Two layers. (a) **Programmatically
+guaranteed** — `ask()` returns a `sources` list built from the *metadata of the chunks actually
+passed to the model*, not from anything the LLM writes; the Gradio UI shows this in a dedicated
+"Retrieved from" box. (b) **Inline** — the prompt also asks the model to cite `(source: ...)` next
+to claims, which it does (see examples below). If the model returns the refusal, the `sources` list
+is cleared so we never attribute a non-answer.
+
+### Example Responses
+
+**Example 1 — grounded, source attributed** (input: *"Do I need an SSN or ITIN to open a US bank
+account as an F-1 student?"*):
+> No, you don't need an SSN or ITIN to open a US bank account as an F-1 student. You can open a bank
+> account with your passport, US address proof, US phone number, and the SSN equivalent of your home
+> country **(source: f1_student_banking.txt)**.
+
+*Retrieved from:* f1_student_banking.txt, f1_student_tax.txt, f1_student_investing.txt, f1_student_opt.txt
+
+**Example 2 — grounded, source attributed** (input: *"Why can't F-1 students use TurboTax, and what
+should they use instead?"*):
+> F-1 students can't use TurboTax because it does not support Form 1040NR, which is required for
+> nonresident aliens **(source: f1_student_tax.txt)**. Instead, they can use alternatives such as
+> Sprintax, F1TaxReturn, or OLT (olt.com)… **(source: f1_student_tax.txt)**.
+
+*Retrieved from:* f1_student_tax.txt, f1_student_investing.txt
+
+**Example 3 — out-of-scope refusal** (input: *"What is the best pizza topping in New York City?"*):
+> I don't have enough information on that.
+
+*Retrieved from:* (no sources — the structural gate caught it; the LLM was never called.)
+
+### Query Interface
+
+A Gradio web UI (`app.py`, run with `python app.py` → http://localhost:7860):
+- **Input** — a single "Your question" textbox (submit with the **Ask** button or Enter). Four
+  clickable example questions are provided so a viewer can use it without instruction.
+- **Output** — an **Answer** box (the grounded response) and a **Retrieved from** box listing the
+  source document(s) the answer was drawn from.
+
+**Sample interaction transcript:**
+```
+Your question:  Can F-1 students legally invest in stocks, and how are gains taxed?
+
+Answer:         Yes, F-1 students can legally invest in stocks (source:
+                f1_student_investing.txt). The gains from these investments are
+                taxed at a flat 30% rate, regardless of long-term vs. short-term
+                capital gains or tax bracket (source: f1_student_investing.txt).
+
+Retrieved from: • f1_student_investing.txt
+                • f1_student_tax.txt
+```
 
 ---
 
