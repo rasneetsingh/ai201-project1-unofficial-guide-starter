@@ -251,16 +251,25 @@ Retrieved from: • f1_student_investing.txt
      Be honest — a partially accurate or inaccurate result that you explain well is more
      valuable than a suspiciously perfect result. -->
 
+All 5 questions were run through the full pipeline (`ask()` in `query.py`, top-k=5). Source of
+each top hit and its cosine distance are shown for transparency.
+
 | # | Question | Expected answer | System response (summarized) | Retrieval quality | Response accuracy |
 |---|----------|-----------------|------------------------------|-------------------|-------------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | Do I need an SSN/ITIN to open a US bank account? | No — passport, US address proof, US phone number, and home-country ID number are enough. | "No… passport, US address proof, US phone number, and the SSN equivalent of your home country" — cites `banking.txt`. Top hit `banking.txt` @ 0.329. | Relevant | **Accurate** |
+| 2 | Work hours on campus: summer vs. in session? | 40 hrs/week when school is out; max 20 hrs/week when classes in session. | "Up to 40 hours per week on campus during summer… cannot work more than 20 hours/week when classes are in session" — cites `employment.txt`. Top hit `employment.txt` @ 0.337. | Relevant | **Accurate** |
+| 3 | Can F-1 students invest, and how are gains taxed? | Yes (avoid day trading); gains may be a flat 30% as a nonresident. | "Yes… avoid day trading… may be taxed a flat 30% on investment gains regardless of long-term vs. short-term" — cites `investing.txt`. Top hit `investing.txt` @ 0.321. | Relevant | **Accurate** |
+| 4 | Why can't F-1 students use TurboTax, what instead? | File 8843/1040NR as nonresident aliens (TurboTax can't); use Sprintax, Glacier, OLT, F1TaxReturn, or VITA. | "TurboTax does not support Form 1040NR… use Sprintax, F1TaxReturn, or OLT" — cites `tax.txt`. Top hit `tax.txt` @ 0.308. | Relevant | **Accurate** (minor omission — names 1040NR but not Form 8843; lists 3 of 5 tools) |
+| 5 | Does pre-completion OPT reduce post-completion OPT? | Yes — 1 yr full-time pre-completion removes all post-completion OPT; 1 yr part-time removes 6 months. | "Yes… 1 year part-time pre-completion OPT reduces full-time OPT by 6 months; 1 year full-time reduces it by 1 year" — cites `opt.txt`. Top hit `opt.txt` @ 0.399. | Relevant | **Accurate** |
 
-**Retrieval quality:** Relevant / Partially relevant / Off-target  
-**Response accuracy:** Accurate / Partially accurate / Inaccurate
+**Summary:** 5/5 questions returned the correct source document as the #1 hit with top distances
+0.308–0.399 (all well under 0.5), and 5/5 answers were accurate. Q4 is accurate but slightly
+incomplete — it omits Form 8843 and two of the five filing tools, because the chunk naming 8843
+(`tax.txt` c0, the OP's question block) ranked #2 while the answer drew mainly from the higher-ranked
+`tax.txt` c1. This is a completeness gap, not an error.
+
+**Legend — Retrieval quality:** Relevant / Partially relevant / Off-target  
+**Legend — Response accuracy:** Accurate / Partially accurate / Inaccurate
 
 ---
 
@@ -277,13 +286,39 @@ Retrieved from: • f1_student_investing.txt
      "The embedding model treated the professor's nickname as out-of-vocabulary and returned
      results from an unrelated review" is an explanation. -->
 
-**Question that failed:**
+**Question that failed:** *"Can I take a summer consulting internship under OPT, and is sponsorship
+hard?"* (This is the cross-document failure candidate flagged in planning.md → Anticipated
+Challenges #2.)
 
-**What the system returned:**
+**What the system returned:** *"…it is possible to take a consulting job on OPT (source:
+f1_students_jobsearch.txt). However, the job must be directly related to your major area of study
+(source: f1_student_opt.txt). Regarding sponsorship, the US job market is rough… very difficult…"*
+The answer affirms doing a **summer** internship **on OPT** and never delivers the single most
+important caveat: you should **not** use OPT in the summer — summer off-campus work should be done
+under **CPT**, because pre-completion OPT used in summer eats into your post-completion OPT.
 
-**Root cause (tied to a specific pipeline stage):**
+**Root cause (tied to a specific pipeline stage): the retrieval stage (top-k cutoff), not
+generation.** The decisive fact lives in `f1_student_employment.txt` chunk c3: *"Important warning
+on OPT vs. CPT during summer: Do NOT use OPT during the summer… Summer off-campus work should be
+done under CPT."* When I retrieved with k=15, that chunk ranked **#10 at cosine distance 0.629** —
+far outside the top-5 the generator actually sees. The query's wording ("consulting internship",
+"OPT", "sponsorship") is semantically closest to `jobsearch.txt` (whose OP literally asks "is it
+possible to take a consulting job on OPT?") and to the OPT-definition chunks, so cosine similarity
+filled all 5 slots with those, crowding out the employment-doc caveat. This is the classic
+cross-document problem: a complete answer must **synthesize two documents** — `employment.txt` (use
+CPT not OPT in summer) and `jobsearch.txt` (consulting + sponsorship is hard) — but top-k=5 with
+pure semantic similarity pulled almost entirely from one side. Generation then did its job correctly
+*given the chunks it had*; it was faithful to a context that was missing the key fact. The grounding
+worked (no hallucination) — retrieval recall was the failure.
 
-**What you would change to fix it:**
+**What you would change to fix it:** Options, roughly in order of effort: (1) **raise k** (e.g.,
+k=8–10) so chunk c3 at rank #10 makes the window — cheap, but adds noise to every query; (2)
+**MMR / diversity re-ranking** so the context isn't dominated by near-duplicate chunks from one
+document, forcing inclusion of other relevant sources; (3) **hybrid retrieval** (semantic + keyword
+BM25) so the literal terms "summer" and "CPT" in c3 get weighted up; (4) **query expansion** — embed
+the question alongside a rephrase ("summer internship work authorization CPT vs OPT") to pull in the
+timing-focused chunk. I'd try MMR re-ranking first, since the root cause is one document
+monopolizing the top-k rather than the right chunk being un-embeddable.
 
 ---
 
@@ -292,9 +327,26 @@ Retrieved from: • f1_student_investing.txt
 <!-- Reflect on how planning.md shaped your implementation.
      Answer both questions with at least 2–3 sentences each. -->
 
-**One way the spec helped you during implementation:**
+**One way the spec helped you during implementation:** The Chunking Strategy section forced me to
+confront *document heterogeneity* before writing any code — I had already reasoned that `banking`
+(one sentence) must stay a single chunk while `visapp` (a long STEP 1/2/3 guide with a bulleted Q&A)
+must split on content boundaries. That ruled out the naive fixed-character splitter and pointed me
+straight at a paragraph- and bullet-aware chunker. The payoff showed up two milestones later: clean,
+self-contained chunks meant retrieval "just worked" on the first try (top distances 0.31–0.40, 5/5
+correct sources) with no debugging loop. The spec also paid off in the failure analysis — Anticipated
+Challenge #2 predicted the exact cross-document question that broke retrieval, so I knew where to
+look.
 
-**One way your implementation diverged from the spec, and why:**
+**One way your implementation diverged from the spec, and why:** My AI Tool Plan described grounding
+as a *prompt-only* mechanism (Milestone 5: "instruct the model to answer only from context… refusing
+when context is insufficient"). In implementation I added a second, **structural** layer the spec
+didn't anticipate: a cosine-distance relevance gate in `query.py` that refuses out-of-scope questions
+**before the LLM is ever called** (and drops low-relevance chunks from the context). I diverged
+because prompt-only grounding still hands the model loosely-related chunks for an off-topic query,
+leaving room for a confident-but-unfounded answer; gating on retrieval distance closes that hole
+deterministically. A second, smaller divergence: the instructions specified `gradio>=6.9.0`, but that
+requires Python 3.10+ and my environment is Python 3.9.6, so I pinned to gradio 4.44.1 (identical
+`gr.Blocks` API).
 
 ---
 
@@ -309,14 +361,29 @@ Retrieved from: • f1_student_investing.txt
      chunk_text(). It returned a function using a fixed character split. I overrode the
      chunk size from 500 to 200 because my documents are short reviews, not long guides." -->
 
-**Instance 1**
+**Instance 1 — Implementing the chunker**
 
-- *What I gave the AI:*
-- *What it produced:*
-- *What I changed or overrode:*
+- *What I gave the AI:* My planning.md Chunking Strategy section and the actual documents, with the
+  instruction to implement `load_documents()` and `chunk_text()` matching my spec (500 chars,
+  ~75-char overlap, short docs stay whole, long guides split on content boundaries).
+- *What it produced:* A paragraph- and bullet-aware packer. On the first run it worked, but when I
+  inspected the output (the chunk-inspection step), several chunks started mid-sentence because the
+  overlap snapped to a *word* boundary, and one investing chunk broke at "vs."
+- *What I changed or overrode:* I directed two fixes rather than accepting the first output: (1)
+  change the overlap to carry a whole *trailing sentence* so no chunk begins mid-sentence, and (2)
+  protect abbreviations (`vs.`, `e.g.`, `U.S.`) from the sentence splitter. I re-verified and
+  confirmed 0/79 chunks start mid-sentence. The inspection-and-iterate loop was the point — I didn't
+  take the generated code as final.
 
-**Instance 2**
+**Instance 2 — Grounding the generation step**
 
-- *What I gave the AI:*
-- *What it produced:*
-- *What I changed or overrode:*
+- *What I gave the AI:* My grounding requirement (answer from retrieved context only, refuse when
+  insufficient, attribute sources) and asked it to wire up generation with Groq.
+- *What it produced:* A working `ask()` with a strict system prompt — i.e., *prompt-only* grounding,
+  which is what my planning.md AI Tool Plan had described.
+- *What I changed or overrode:* I wasn't satisfied that a prompt alone would stop the model from
+  answering off-topic questions from training knowledge, so I directed adding a *structural* layer:
+  a cosine-distance relevance gate that refuses before the LLM is called, plus building the `sources`
+  list programmatically from chunk metadata instead of trusting the LLM to cite. I tested with an
+  out-of-scope question ("best pizza topping in NYC") to confirm the gate fires and the system
+  refuses.
