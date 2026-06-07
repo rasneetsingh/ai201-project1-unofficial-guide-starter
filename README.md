@@ -111,9 +111,47 @@ adjacent sub-points connected for multi-part answers.
      Consider: context length limits, multilingual support, accuracy on domain-specific text,
      latency, and local vs. API-hosted. -->
 
-**Model used:**
+**Model used:** `all-MiniLM-L6-v2` via sentence-transformers — a local, free, 384-dimensional
+model. Chosen because it runs entirely on-device (no API key, no rate limits, no per-call cost),
+is fast enough to embed all 79 chunks in under a second, and is accurate enough for a corpus this
+small. Chunks and queries are embedded with `normalize_embeddings=True` and stored in ChromaDB
+using **cosine** distance.
 
-**Production tradeoff reflection:**
+**Production tradeoff reflection:** If cost weren't a constraint I'd weigh a larger hosted model
+(e.g. OpenAI `text-embedding-3-large` at 3,072 dims, or a Cohere multilingual model). Tradeoffs:
+(1) **context length** — not a factor here since my chunks are short (≤500 chars); (2) **multilingual
+support** — relevant because F-1 questions sometimes mix in home-country terms, though my corpus is
+English; (3) **domain accuracy** — immigration jargon (CPT, OPT, I-20, 1040NR, prevailing wage) is
+niche, so a stronger model might disambiguate better; (4) **latency & local vs. API** — MiniLM runs
+locally with zero cost or rate limits, while a hosted model adds per-call latency and cost for
+accuracy gains that are marginal at this scale. For 79 chunks, MiniLM is the right tradeoff.
+
+### Retrieval Test Results
+
+Vector store: **ChromaDB** (cosine distance, lower = more relevant), **top-k = 5**, embedded with
+`all-MiniLM-L6-v2`. All 5 evaluation queries returned the correct source document as the #1 hit
+with a top-result distance well under 0.5:
+
+| Query | Top hit | Distance |
+|-------|---------|----------|
+| Do I need an SSN/ITIN to open a US bank account? | `f1_student_banking.txt` c0 | **0.329** |
+| Work hours on campus: summer vs. in session? | `f1_student_employment.txt` c0 | **0.337** |
+| Can F-1 students invest, and how are gains taxed? | `f1_student_investing.txt` c0 | **0.321** |
+| Why can't F-1 students use TurboTax? | `f1_student_tax.txt` c1 | **0.308** |
+| Does pre-completion OPT reduce post-completion OPT? | `f1_student_opt.txt` c4 | **0.399** |
+
+**Why the returned chunks are relevant (2 explained):**
+
+- *"Why can't F-1 students use TurboTax…"* → top chunk `f1_student_tax.txt` c1 (dist 0.308): this
+  chunk directly states F-1 students are *"nonresident aliens… need to file Form 8843 and Form
+  1040NR — which TurboTax does not support,"* then begins listing alternatives (Sprintax). The
+  query never uses the words "nonresident" or "1040NR," yet semantic search matched it — that's the
+  embedding capturing *meaning*, not keywords.
+- *"Does pre-completion OPT reduce post-completion OPT?"* → top chunk `f1_student_opt.txt` c4 (dist
+  0.399) is the section literally titled *"Impact of Pre-completion OPT… on Requests for
+  Post-completion OPT,"* and the concrete answer (1 yr full-time removes all post-completion OPT;
+  part-time removes 6 months) is in c5, also retrieved in the top-5. The relevant content is in the
+  returned set.
 
 ---
 
