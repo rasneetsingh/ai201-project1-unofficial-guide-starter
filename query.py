@@ -20,6 +20,7 @@ metadata of the chunks actually passed to the model, not from whatever the LLM w
 """
 
 import os
+import re
 
 from dotenv import load_dotenv
 from groq import Groq
@@ -47,8 +48,11 @@ or prior knowledge.
 EXACTLY this sentence and nothing else: "{refusal}"
 - Do not guess, do not infer beyond what the text says, and do not add general advice \
 that is not in the context.
-- These are community/forum sources, so when relevant, attribute claims to the source \
-filename, e.g. (source: f1_student_tax.txt).""".format(refusal=REFUSAL)
+- These are community/forum sources. Attribute your answer to the source URL(s) shown with the \
+context documents you used, e.g. (source: https://www.reddit.com/r/tax/comments/1rofo6m/taxes_for_international_students/). \
+Use the exact URL(s) from the context; never invent or shorten links. Cite each distinct source \
+URL at most once (e.g. group it at the end of the relevant sentence) rather than repeating the same \
+link multiple times.""".format(refusal=REFUSAL)
 
 _client = None
 
@@ -64,11 +68,26 @@ def get_client():
     return _client
 
 
+def _dedupe_citations(answer):
+    """Collapse repeated identical URLs inside a single (source: a, a, a) group."""
+    def _collapse(match):
+        items = [s.strip() for s in match.group(1).split(",") if s.strip()]
+        seen, unique = set(), []
+        for it in items:
+            if it not in seen:
+                seen.add(it)
+                unique.append(it)
+        label = "source" if len(unique) == 1 else "sources"
+        return f"({label}: " + ", ".join(unique) + ")"
+
+    return re.sub(r"\(sources?:\s*([^)]+)\)", _collapse, answer)
+
+
 def _format_context(chunks):
     """Render retrieved chunks into a numbered, source-labeled context block."""
     blocks = []
     for i, c in enumerate(chunks, 1):
-        blocks.append(f"[{i}] (source: {c['source']})\n{c['text']}")
+        blocks.append(f"[{i}] (source: {c['source_url']})\n{c['text']}")
     return "\n\n".join(blocks)
 
 
@@ -89,7 +108,7 @@ def ask(question, k=TOP_K):
 
     # Keep only chunks relevant enough to be useful context.
     context_chunks = [h for h in hits if h["distance"] <= CONTEXT_THRESHOLD]
-    sources = sorted({c["source"] for c in context_chunks})
+    sources = sorted({c["source_url"] for c in context_chunks})
 
     user_message = (
         f"Context documents:\n\n{_format_context(context_chunks)}\n\n"
@@ -104,7 +123,7 @@ def ask(question, k=TOP_K):
             {"role": "user", "content": user_message},
         ],
     )
-    answer = completion.choices[0].message.content.strip()
+    answer = _dedupe_citations(completion.choices[0].message.content.strip())
 
     # If the model refused, don't attach sources (it didn't actually use them).
     if answer == REFUSAL:

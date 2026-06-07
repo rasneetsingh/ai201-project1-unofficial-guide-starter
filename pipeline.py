@@ -27,6 +27,26 @@ import unicodedata
 
 DOCUMENTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "documents")
 
+# Original source URL for each document, used for citation/attribution instead of
+# the raw filename. (See README → Document Sources.) banking has no public URL.
+SOURCE_URLS = {
+    "f1_student_day1cpt.txt": "https://www.reddit.com/r/Day1CPTuniversities/comments/1ny23ip/guide_day_1_cpt_application_step_by_step/",
+    "f1_student_opt.txt": "https://www.uscis.gov/working-in-the-united-states/students-and-exchange-visitors/optional-practical-training-opt-for-f-1-students",
+    "f1_student_h1b.txt": "https://oia.osu.edu/international-scholars/h-1b-workers/h-1b-step-step-process",
+    "f1_student_investing.txt": "https://www.reddit.com/r/f1visa/comments/1gyc6sk/can_f1_students_in_the_us_make_investments/",
+    "f1_students_jobsearch.txt": "https://www.reddit.com/r/PhD/comments/1jcr56m/struggling_with_job_hunting_as_an_f1_student_need/",
+    "f1_student_health.txt": "https://www.reddit.com/r/f1visa/comments/1pkmcfs/these_are_the_worst_insurance_a_student_can_get/",
+    "f1_student_employment.txt": "https://www.reddit.com/r/f1visa/comments/1fbakb7/are_students_on_an_f1_visa_allowed_to_work_during/",
+    "f1_student_visapp.txt": "https://www.reddit.com/r/IntltoUSA/comments/1sth1tg/three_steps_to_prepare_for_your_f1_us_student/",
+    "f1_student_tax.txt": "https://www.reddit.com/r/tax/comments/1rofo6m/taxes_for_international_students/",
+    "f1_student_banking.txt": "",  # no public URL collected for this source
+}
+
+
+def source_url(filename):
+    """Return the citation URL for a document, falling back to the filename."""
+    return SOURCE_URLS.get(filename) or filename
+
 # Final chunking parameters (within the 400–600 char / 10–15% overlap range in planning.md).
 CHUNK_SIZE = 500     # target max characters per chunk
 OVERLAP = 75         # characters of context carried from one chunk into the next (~15%)
@@ -213,6 +233,7 @@ def build_corpus(documents_dir=DOCUMENTS_DIR, chunk_size=CHUNK_SIZE, overlap=OVE
             corpus.append({
                 "id": f"{doc['source']}::chunk_{i}",
                 "source": doc["source"],
+                "source_url": source_url(doc["source"]),
                 "chunk_index": i,
                 "text": chunk,
                 "n_chars": len(chunk),

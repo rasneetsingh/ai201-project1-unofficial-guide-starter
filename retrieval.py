@@ -81,7 +81,10 @@ def build_index(persist_path=CHROMA_PATH):
         ids=[c["id"] for c in corpus],
         documents=[c["text"] for c in corpus],
         embeddings=embed([c["text"] for c in corpus]),
-        metadatas=[{"source": c["source"], "chunk_index": c["chunk_index"]} for c in corpus],
+        metadatas=[
+            {"source": c["source"], "source_url": c["source_url"], "chunk_index": c["chunk_index"]}
+            for c in corpus
+        ],
     )
     return collection
 
@@ -112,6 +115,7 @@ def retrieve(query, k=DEFAULT_K, collection=None):
     ):
         hits.append({
             "source": meta["source"],
+            "source_url": meta.get("source_url") or meta["source"],
             "chunk_index": meta["chunk_index"],
             "text": doc,
             "distance": dist,

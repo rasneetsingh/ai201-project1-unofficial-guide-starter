@@ -185,19 +185,26 @@ the answer. The model is also called with `temperature=0` for deterministic, gro
 >   this sentence and nothing else: "I don't have enough information on that."
 > - Do not guess, do not infer beyond what the text says, and do not add general advice that is not
 >   in the context.
-> - These are community/forum sources, so when relevant, attribute claims to the source filename,
->   e.g. (source: f1_student_tax.txt).
+> - These are community/forum sources, so attribute claims to the source URL shown with each context
+>   document, e.g. (source: https://www.reddit.com/r/tax/comments/1rofo6m/taxes_for_international_students/).
+>   Use the exact URL from the context; never invent or shorten links, and cite each distinct URL at
+>   most once.
 
-The retrieved chunks are passed in the user message as a numbered, source-labeled context block
-(`[1] (source: f1_student_banking.txt) <chunk text>`), so the model sees exactly which document
-each fact came from.
+Each document's **original source URL** (the Reddit thread, USCIS page, etc. from the Document
+Sources table) is stored as chunk metadata in `pipeline.py` (`SOURCE_URLS`) and carried through the
+vector store. The retrieved chunks are passed in the user message as a numbered, URL-labeled context
+block (`[1] (source: https://www.reddit.com/r/...) <chunk text>`), so the model cites the real link
+rather than a filename.
 
 **How source attribution is surfaced in the response:** Two layers. (a) **Programmatically
-guaranteed** — `ask()` returns a `sources` list built from the *metadata of the chunks actually
-passed to the model*, not from anything the LLM writes; the Gradio UI shows this in a dedicated
-"Retrieved from" box. (b) **Inline** — the prompt also asks the model to cite `(source: ...)` next
-to claims, which it does (see examples below). If the model returns the refusal, the `sources` list
-is cleared so we never attribute a non-answer.
+guaranteed** — `ask()` returns a `sources` list of the **source URLs** built from the *metadata of
+the chunks actually passed to the model*, not from anything the LLM writes; the Gradio UI shows these
+in a dedicated "Retrieved from" box. (b) **Inline** — the model cites `(source: <url>)` next to
+claims; a small post-processing step (`_dedupe_citations`) collapses any repeated URL within a
+citation so links aren't listed multiple times. If the model returns the refusal, the `sources` list
+is cleared so we never attribute a non-answer. *(One document, `f1_student_banking.txt`, was a
+personal forum tip with no public URL collected, so it falls back to the filename until a link is
+added.)*
 
 ### Example Responses
 
@@ -205,17 +212,18 @@ is cleared so we never attribute a non-answer.
 account as an F-1 student?"*):
 > No, you don't need an SSN or ITIN to open a US bank account as an F-1 student. You can open a bank
 > account with your passport, US address proof, US phone number, and the SSN equivalent of your home
-> country **(source: f1_student_banking.txt)**.
+> country **(source: f1_student_banking.txt)**. *(banking is the one source with no public URL.)*
 
-*Retrieved from:* f1_student_banking.txt, f1_student_tax.txt, f1_student_investing.txt, f1_student_opt.txt
+*Retrieved from:* f1_student_banking.txt, https://www.reddit.com/r/f1visa/comments/1gyc6sk/can_f1_students_in_the_us_make_investments/
 
 **Example 2 — grounded, source attributed** (input: *"Why can't F-1 students use TurboTax, and what
 should they use instead?"*):
-> F-1 students can't use TurboTax because it does not support Form 1040NR, which is required for
-> nonresident aliens **(source: f1_student_tax.txt)**. Instead, they can use alternatives such as
-> Sprintax, F1TaxReturn, or OLT (olt.com)… **(source: f1_student_tax.txt)**.
+> F-1 students can't use TurboTax because TurboTax does not support Form 8843 and Form 1040NR, which
+> are required for nonresident aliens **(source: https://www.reddit.com/r/tax/comments/1rofo6m/taxes_for_international_students/)**.
+> Instead, they can use alternatives such as Sprintax, F1TaxReturn, OLT, Glacier Tax Prep, or fill
+> out the forms themselves **(source: https://www.reddit.com/r/tax/comments/1rofo6m/taxes_for_international_students/)**.
 
-*Retrieved from:* f1_student_tax.txt, f1_student_investing.txt
+*Retrieved from:* https://www.reddit.com/r/tax/comments/1rofo6m/taxes_for_international_students/, https://www.reddit.com/r/f1visa/comments/1gyc6sk/can_f1_students_in_the_us_make_investments/
 
 **Example 3 — out-of-scope refusal** (input: *"What is the best pizza topping in New York City?"*):
 > I don't have enough information on that.
@@ -227,20 +235,21 @@ should they use instead?"*):
 A Gradio web UI (`app.py`, run with `python app.py` → http://localhost:7860):
 - **Input** — a single "Your question" textbox (submit with the **Ask** button or Enter). Four
   clickable example questions are provided so a viewer can use it without instruction.
-- **Output** — an **Answer** box (the grounded response) and a **Retrieved from** box listing the
-  source document(s) the answer was drawn from.
+- **Output** — an **Answer** box (the grounded response, with inline source links) and a
+  **Retrieved from** box listing the source URL(s) the answer was drawn from.
 
 **Sample interaction transcript:**
 ```
 Your question:  Can F-1 students legally invest in stocks, and how are gains taxed?
 
 Answer:         Yes, F-1 students can legally invest in stocks (source:
-                f1_student_investing.txt). The gains from these investments are
-                taxed at a flat 30% rate, regardless of long-term vs. short-term
-                capital gains or tax bracket (source: f1_student_investing.txt).
+                https://www.reddit.com/r/f1visa/comments/1gyc6sk/can_f1_students_in_the_us_make_investments/).
+                The main thing to avoid is day trading. F-1 students may be taxed a
+                flat 30% on investment gains, regardless of long-term vs. short-term
+                capital gains or tax bracket (source: .../1gyc6sk/...).
 
-Retrieved from: • f1_student_investing.txt
-                • f1_student_tax.txt
+Retrieved from: • https://www.reddit.com/r/f1visa/comments/1gyc6sk/can_f1_students_in_the_us_make_investments/
+                • https://www.reddit.com/r/tax/comments/1rofo6m/taxes_for_international_students/
 ```
 
 ---
